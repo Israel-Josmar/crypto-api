@@ -1,5 +1,7 @@
+import { getPrice } from './sdk'
+import nock from 'nock'
 
-describe.skip('get price from exchange', () => {
+describe('get price from exchange', () => {
   test('currency details on url path', async () => {
     const exchange = {
       name: 'FakeExchange',
@@ -11,12 +13,16 @@ describe.skip('get price from exchange', () => {
       },
     }
 
-    const options = {
+    const payload = {
       currency_from: 'ltc',
       currency_to: 'usd',
     }
 
-    const price = await getPrice(exchange, options)
+    nock('https://FakeExchange.com')
+      .get('/ticker/ltc_usd/')
+      .reply(200, { last: 185.00 })
+
+    const price = await getPrice(exchange, payload)
 
     expect(price).toBe(185.00)
   })
@@ -32,11 +38,16 @@ describe.skip('get price from exchange', () => {
       },
     }
 
-    const options = {
+    const payload = {
       currency_from: 'ltc',
       currency_to: 'usd',
     }
-    const price = await getPrice(exchange, options)
+
+    nock('https://FakeExchange.com')
+      .get('/ticker/')
+      .reply(200, { ltc_usd: { last_trade: 185.00 } })
+
+    const price = await getPrice(exchange, payload)
 
     expect(price).toBe(185.00)
   })
