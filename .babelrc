@@ -1,7 +1,13 @@
 {
   "env": {
+    "development": {
+      "presets": [["env", { "targets": { "node": "current" } }]]
+    },
     "test": {
       "presets": [["env", { "targets": { "node": "current" } }]]
     }
-  }
+  },
+  "plugins": [
+    "transform-object-rest-spread"
+  ]
 }

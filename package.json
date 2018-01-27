@@ -2,24 +2,28 @@
   "name": "cripto-arb-api",
   "private": true,
   "license": "MIT",
-  "main": "index.js",
   "scripts": {
     "fix": "fixpack && eslint . --fix --ignore-pattern !/.*rc.js",
+    "start": "nodemon ./src/index-development",
     "test": "jest --watch"
   },
   "dependencies": {
+    "express": "^4.16.2",
     "fetch-this": "^0.2.0",
     "handlebars": "^4.0.11",
     "lodash.get": "^4.4.2"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "eslint": "^4.15.0",
     "eslint-plugin-import": "^2.8.0",
     "fixpack": "^2.3.1",
     "jest": "^22.1.4",
     "nock": "^9.1.6",
-    "node-fetch": "^1.7.3"
+    "node-fetch": "^1.7.3",
+    "nodemon": "^1.14.11",
+    "regenerator-runtime": "^0.11.1"
   }
 }

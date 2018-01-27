@@ -51,4 +51,28 @@ describe('get price from exchange', () => {
 
     expect(price).toBe(185.00)
   })
+
+  test('return body if there is no `result` recipe', async () => {
+    const exchange = {
+      name: 'FakeExchange',
+      api: {
+        fetch: {
+          url: 'https://FakeExchange.com/ticker/',
+        },
+      },
+    }
+
+    const payload = {
+      currency_from: 'ltc',
+      currency_to: 'usd',
+    }
+
+    nock('https://FakeExchange.com')
+      .get('/ticker/')
+      .reply(200, 185.00)
+
+    const price = await getPrice(exchange, payload)
+
+    expect(price).toBe(185.00)
+  })
 })
