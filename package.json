@@ -2,9 +2,9 @@
   "name": "cripto-arb-api",
   "private": true,
   "license": "MIT",
-  "main": "index.js",
   "scripts": {
     "fix": "fixpack && eslint . --fix --ignore-pattern !/.*rc.js",
+    "start": "node ./src/index-development",
     "test": "jest --watch"
   },
   "dependencies": {
