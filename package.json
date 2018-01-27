@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "fix": "fixpack && eslint . --fix --ignore-pattern !/.*rc.js",
-    "start": "node ./src/index-development",
+    "start": "nodemon ./src/index-development",
     "test": "jest --watch"
   },
   "dependencies": {
@@ -21,6 +21,7 @@
     "fixpack": "^2.3.1",
     "jest": "^22.1.4",
     "nock": "^9.1.6",
-    "node-fetch": "^1.7.3"
+    "node-fetch": "^1.7.3",
+    "nodemon": "^1.14.11"
   }
 }
