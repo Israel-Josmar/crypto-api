@@ -1,3 +1,7 @@
+import flow from 'lodash.flow'
+import reverse from 'lodash.reverse'
+import sortBy from 'lodash.sortby'
+
 export const getDashboard = async (sdk, data) => {
   const getPrice = sdk.getPrice
 
@@ -35,7 +39,11 @@ export const getDashboard = async (sdk, data) => {
   const exchangesProfits = criptoPricesBrl.map(getProfit)
 
   // return assembled answer
-  const dashboard = exchangesProfits.map(getDashboardEntry)
+  const dashboard = flow([
+    (_) => _.map(getDashboardEntry),
+    (_) => sortBy(_, (el) => el.profitPercent),
+    reverse,
+  ])(exchangesProfits)
 
   return dashboard
 }

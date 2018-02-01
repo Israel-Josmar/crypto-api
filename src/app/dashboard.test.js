@@ -40,14 +40,14 @@ describe('#getDashboard', () => {
       {
         exchangeId: 'otherFake',
         exchange: 'OtherFakeExchange',
-        coin: 'btc',
-        profitPercent: 1.0049273901497189,
+        coin: 'eth',
+        profitPercent: 1.01736280074534,
       },
       {
         exchangeId: 'otherFake',
         exchange: 'OtherFakeExchange',
-        coin: 'eth',
-        profitPercent: 1.01736280074534,
+        coin: 'btc',
+        profitPercent: 1.0049273901497189,
       },
     ]
 
