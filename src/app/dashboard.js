@@ -1,9 +1,11 @@
-const data = require('../../data.json')
+export const getDashboard = async (sdk, data) => {
+  const getPrice = sdk.getPrice
 
-export const getDashboard = async ({ getPrice }) => {
-  const chosenExchangeId = data.chosenExchangeId
-  const currencies = data.currencies
-  const allExchanges = data.exchanges
+  const {
+    chosenExchangeId,
+    currencies,
+    exchanges: allExchanges,
+  } = data
 
   const chosenExchange = allExchanges.find((exchange) => exchange.id === chosenExchangeId)
 
@@ -66,15 +68,14 @@ const createGetProfit = (chosenExchangePrices) => (criptoPrice) => {
 
   return {
     ...criptoPrice,
-    value: chosenExchangePrice.price - criptoPrice.price,
     percent: chosenExchangePrice.price / criptoPrice.price,
     price: undefined,
   }
 }
 
 const getDashboardEntry = (profit) => ({
+  exchangeId: profit.exchangeId,
   exchange: profit.exchangeName,
   coin: profit.cripto,
-  profit: profit.value,
   profitPercent: profit.percent,
 })

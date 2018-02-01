@@ -1,8 +1,13 @@
+let urlAndResultsCache
+
+export const loadFakeReturns = (urlAndResults) => {
+  urlAndResultsCache = urlAndResults
+}
+
 export const getPrice = async (exchange, payload) => {
-  // const response = await fetchThis(exchange.api.fetch, payload)
-  // const body = await response.json()
-  //
-  // const resultPath = Handlebars.compile(exchange.api.result)(payload)
-  //
-  // return get(body, resultPath)
+  if (!payload) {
+    return urlAndResultsCache[exchange.id]
+  }
+
+  return urlAndResultsCache[exchange.id][payload.cripto]
 }
