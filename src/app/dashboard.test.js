@@ -4,6 +4,7 @@ import {
   loadFakeReturns,
   resetFakeReturns,
 } from '../exchange-sdk/fake-sdk'
+
 describe('#getDashboard', () => {
   const sdk = { getPrice }
 
@@ -26,6 +27,10 @@ describe('#getDashboard', () => {
       },
     ],
   }
+
+  afterAll(() => {
+    resetFakeReturns()
+  })
 
   test('should return a dashboard, sorted by max profit', async () => {
     loadFakeReturns({

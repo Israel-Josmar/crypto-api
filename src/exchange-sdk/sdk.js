@@ -1,6 +1,5 @@
-import fetchThis from 'fetch-this'
+import { fetchThis, getResult } from 'fetch-this'
 import Handlebars from 'handlebars'
-import get from 'lodash.get'
 
 Handlebars.registerHelper('upper', (str) => {
   if (!str || typeof str !== 'string') {
@@ -10,14 +9,20 @@ Handlebars.registerHelper('upper', (str) => {
 })
 
 export const getPrice = async (exchange, payload) => {
-  const response = await fetchThis(exchange.api.fetch, payload)
-  const body = await response.json()
-
-  if (!exchange.api.result) {
-    return body
+  const compile = (template) => {
+    if (!template) return ''
+    return Handlebars.compile(template)(payload)
   }
 
-  const resultPath = Handlebars.compile(exchange.api.result)(payload)
+  const data = {
+    fetch: {
+      url: compile(exchange.api.fetch.url),
+    },
+    result: compile(exchange.api.result),
+  }
 
-  return get(body, resultPath)
+  const response = await fetchThis(data)
+  const value = await getResult(response, data)
+
+  return value
 }
