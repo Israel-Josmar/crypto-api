@@ -1,16 +1,53 @@
 import { getDashboard } from './dashboard'
-import { getPrice } from '../exchange-sdk/fake-sdk'
+import {
+  getPrice,
+  loadFakeReturns,
+  resetFakeReturns,
+} from '../exchange-sdk/fake-sdk'
+describe('#getDashboard', () => {
+  const sdk = { getPrice }
 
-describe.skip('#getDashboard', () => {
-  test('should return a dashboard', async () => {
-    const dashboard = await getDashboard({ getPrice })
+  const data = {
+    chosenExchangeId: 'fake',
+    currencies: {
+      usd: {
+        id: 'usd',
+      },
+    },
+    exchanges: [
+      {
+        id: 'fake',
+        criptos: ['btc', 'eth'],
+      },
+      {
+        id: 'otherFake',
+        name: 'OtherFakeExchange',
+        criptos: ['btc', 'eth'],
+      },
+    ],
+  }
+
+  test('should return a dashboard, sorted by max profit', async () => {
+    loadFakeReturns({
+      usd: 3.18,
+      fake: { btc: 32136, eth: 3550 },
+      otherFake: { btc: 10056.11, eth: 1097.3 },
+    })
+
+    const dashboard = await getDashboard(sdk, data)
 
     const expected = [
       {
-        exchange: 'FakeExchange',
-        coin: 'Litecoin',
-        profit: '400.00',
-        profitPercent: '3%',
+        exchangeId: 'otherFake',
+        exchange: 'OtherFakeExchange',
+        coin: 'eth',
+        profitPercent: 1.01736280074534,
+      },
+      {
+        exchangeId: 'otherFake',
+        exchange: 'OtherFakeExchange',
+        coin: 'btc',
+        profitPercent: 1.0049273901497189,
       },
     ]
 

@@ -11,7 +11,10 @@
     "express": "^4.16.2",
     "fetch-this": "^0.2.0",
     "handlebars": "^4.0.11",
-    "lodash.get": "^4.4.2"
+    "lodash.flow": "^3.5.0",
+    "lodash.get": "^4.4.2",
+    "lodash.reverse": "^4.0.1",
+    "lodash.sortby": "^4.7.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",

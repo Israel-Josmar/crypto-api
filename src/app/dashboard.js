@@ -1,9 +1,15 @@
-const data = require('../../data.json')
+import flow from 'lodash.flow'
+import reverse from 'lodash.reverse'
+import sortBy from 'lodash.sortby'
 
-export const getDashboard = async ({ getPrice }) => {
-  const chosenExchangeId = data.chosenExchangeId
-  const currencies = data.currencies
-  const allExchanges = data.exchanges
+export const getDashboard = async (sdk, data) => {
+  const getPrice = sdk.getPrice
+
+  const {
+    chosenExchangeId,
+    currencies,
+    exchanges: allExchanges,
+  } = data
 
   const chosenExchange = allExchanges.find((exchange) => exchange.id === chosenExchangeId)
 
@@ -33,7 +39,11 @@ export const getDashboard = async ({ getPrice }) => {
   const exchangesProfits = criptoPricesBrl.map(getProfit)
 
   // return assembled answer
-  const dashboard = exchangesProfits.map(getDashboardEntry)
+  const dashboard = flow([
+    (_) => _.map(getDashboardEntry),
+    (_) => sortBy(_, (el) => el.profitPercent),
+    reverse,
+  ])(exchangesProfits)
 
   return dashboard
 }
@@ -66,15 +76,14 @@ const createGetProfit = (chosenExchangePrices) => (criptoPrice) => {
 
   return {
     ...criptoPrice,
-    value: chosenExchangePrice.price - criptoPrice.price,
     percent: chosenExchangePrice.price / criptoPrice.price,
     price: undefined,
   }
 }
 
 const getDashboardEntry = (profit) => ({
+  exchangeId: profit.exchangeId,
   exchange: profit.exchangeName,
   coin: profit.cripto,
-  profit: profit.value,
   profitPercent: profit.percent,
 })
