@@ -3,7 +3,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "fix": "fixpack && eslint . --fix --ignore-pattern !/.*rc.js",
+    "fix": "fixpack && eslint . --fix --max-warnings 0 --ignore-pattern !/.*rc.js",
     "start": "nodemon ./src/index-development",
     "test": "jest --watch"
   },
