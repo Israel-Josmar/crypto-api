@@ -83,7 +83,7 @@ describe('get price from exchange', () => {
         fetch: {
           url: 'https://FakeExchange.com/ticker/',
         },
-        result: '{{upper cripto }}_{{upper currency }}.last_trade',
+        result: '{{#upper}}{{ cripto }}_{{ currency }}{{/upper}}.last_trade',
       },
     }
 
