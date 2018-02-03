@@ -1,7 +1,11 @@
-let urlAndResultsCache
+let urlAndResultsCache = {}
 
 export const loadFakeReturns = (urlAndResults) => {
   urlAndResultsCache = urlAndResults
+}
+
+export const resetFakeReturns = () => {
+  urlAndResultsCache = {}
 }
 
 export const getPrice = async (exchange, payload) => {
