@@ -7,15 +7,15 @@ describe('get price from exchange', () => {
       name: 'FakeExchange',
       api: {
         fetch: {
-          url: 'https://FakeExchange.com/ticker/{{ currency_from }}_{{ currency_to }}/',
+          url: 'https://FakeExchange.com/ticker/{{ cripto }}_{{ currency }}/',
         },
         result: 'last',
       },
     }
 
     const payload = {
-      currency_from: 'ltc',
-      currency_to: 'usd',
+      cripto: 'ltc',
+      currency: 'usd',
     }
 
     nock('https://FakeExchange.com')
@@ -34,13 +34,13 @@ describe('get price from exchange', () => {
         fetch: {
           url: 'https://FakeExchange.com/ticker/',
         },
-        result: '{{ currency_from }}_{{ currency_to }}.last_trade',
+        result: '{{ cripto }}_{{ currency }}.last_trade',
       },
     }
 
     const payload = {
-      currency_from: 'ltc',
-      currency_to: 'usd',
+      cripto: 'ltc',
+      currency: 'usd',
     }
 
     nock('https://FakeExchange.com')
@@ -63,8 +63,8 @@ describe('get price from exchange', () => {
     }
 
     const payload = {
-      currency_from: 'ltc',
-      currency_to: 'usd',
+      cripto: 'ltc',
+      currency: 'usd',
     }
 
     nock('https://FakeExchange.com')
@@ -83,13 +83,13 @@ describe('get price from exchange', () => {
         fetch: {
           url: 'https://FakeExchange.com/ticker/',
         },
-        result: '{{upper currency_from }}_{{upper currency_to }}.last_trade',
+        result: '{{#upper}}{{ cripto }}_{{ currency }}{{/upper}}.last_trade',
       },
     }
 
     const payload = {
-      currency_from: 'ltc',
-      currency_to: 'usd',
+      cripto: 'ltc',
+      currency: 'usd',
     }
 
     nock('https://FakeExchange.com')
