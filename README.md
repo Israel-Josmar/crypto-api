@@ -1,2 +1,2 @@
-# fetch-this
-Make requests based on stored configuration
+# crypto-api
+API for cryptocurrency arbitrage app
