@@ -5,7 +5,7 @@ import { getPrice } from './exchange-sdk/sdk'
 const server = express()
 const port = 3000
 
-const data = require('../../data.json')
+const data = require('../data.json')
 
 server.get('/dashboard', async (req, res) => {
   const sdk = { getPrice }
