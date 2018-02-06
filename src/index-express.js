@@ -3,7 +3,7 @@ import { getDashboard } from './app/dashboard'
 import { getPrice } from './exchange-sdk/sdk'
 
 const server = express()
-const port = 3000
+const port = 3001
 
 const data = require('../data.json')
 
