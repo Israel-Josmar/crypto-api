@@ -1,11 +1,7 @@
 let urlAndResultsCache = {}
 
-export const loadFakeReturns = (urlAndResults) => {
+export const loadFake = (urlAndResults) => {
   urlAndResultsCache = urlAndResults
-}
-
-export const resetFakeReturns = () => {
-  urlAndResultsCache = {}
 }
 
 export const getPrice = async (exchange, payload) => {
@@ -13,5 +9,5 @@ export const getPrice = async (exchange, payload) => {
     return urlAndResultsCache[exchange.id]
   }
 
-  return urlAndResultsCache[exchange.id][payload.cripto]
+  return urlAndResultsCache[exchange.id][payload.coin]
 }

@@ -1,89 +1,58 @@
 import flow from 'lodash.flow'
 import reverse from 'lodash.reverse'
 import sortBy from 'lodash.sortby'
+import keyBy from 'lodash.keyby'
 
-export const getDashboard = async (sdk, data) => {
-  const getPrice = sdk.getPrice
+export const getDashboard = async (pricesCache, chosenExchangeId) => {
+  // get targeted cripto prices from cache
+  const prices = await pricesCache.getAll()
 
-  const {
-    chosenExchangeId,
-    currencies,
-    exchanges: allExchanges,
-  } = data
+  // discover profits from given prices
+  const profits = getProfits(prices, chosenExchangeId)
 
-  const chosenExchange = allExchanges.find((exchange) => exchange.id === chosenExchangeId)
-
-  const exchanges = allExchanges.filter((exchange) => exchange.id !== chosenExchangeId)
-
-  const chosenExchangeCriptos = chosenExchange.criptos
-
-  // call getPrice for usd
-  const usd = Number.parseFloat(await getPrice(currencies.usd), 10)
-
-  const getPriceByCurrency = createGetPriceByCurrency(getPrice, chosenExchange, 'brl')
-  const chosenExchangePricesPromises = chosenExchangeCriptos.map(getPriceByCurrency)
-  const chosenExchangePrices = await Promise.all(chosenExchangePricesPromises)
-
-  // call getPrice for each exchange
-  const getExchangeCriptoPrices = createGetExchangeCriptoPrices(getPrice, chosenExchangeCriptos)
-  const criptoPrices = await Promise.all(
-    exchanges.map(getExchangeCriptoPrices).reduce((result, nextArr) => result.concat(nextArr), []),
-  )
-
-  // convert each exchange return for brl (using usd)
-  const convertCriptoPricesToBrl = createConvertCriptoPricesToBrl(usd)
-  const criptoPricesBrl = criptoPrices.map(convertCriptoPricesToBrl)
-
-  // for each getPrice (brl) return diff to chosen exchange
-  const getProfit = createGetProfit(chosenExchangePrices)
-  const exchangesProfits = criptoPricesBrl.map(getProfit)
-
-  // return assembled answer
-  const dashboard = flow([
-    (_) => _.map(getDashboardEntry),
-    (_) => sortBy(_, (el) => el.profitPercent),
-    reverse,
-  ])(exchangesProfits)
+  // build the final dashboard
+  const dashboard = buildDashboard(profits)
 
   return dashboard
 }
 
-const createGetExchangeCriptoPrices = (getPrice, chosenExchangeCriptos) => (exchange) => {
-  const getPriceByCurrency = createGetPriceByCurrency(getPrice, exchange, 'usd')
+const getProfits = (prices, chosenExchangeId) => {
+  const isChosenExchange = (price) => price.exchangeId === chosenExchangeId
+  const isOtherExchange = (price) => !isChosenExchange(price)
 
-  return exchange.criptos
-    .filter((cripto) => chosenExchangeCriptos.includes(cripto))
-    .map(getPriceByCurrency)
+  // hashmap of prices by coin id
+  const targetPricesMap = flow([
+    _ => _.filter(isChosenExchange),
+    _ => keyBy(_, (price) => price.coin),
+  ])(prices)
+
+  // list of prices for other criptos that has a target price
+  const otherPrices = prices
+    .filter(isOtherExchange)
+    .filter((price) => targetPricesMap[price.coin])
+
+  const profits = otherPrices.map((price) => {
+    const targetPrice = targetPricesMap[price.coin]
+    return ({
+      ...price,
+      percent: Number.parseFloat(targetPrice.value, 10) / Number.parseFloat(price.value, 10),
+    })
+  })
+
+  return profits
 }
 
-const createGetPriceByCurrency = (getPrice, exchange, currency) => (cripto) => {
-  return getPrice(exchange, { currency, cripto }).then((price) => ({
-    exchangeId: exchange.id,
-    exchangeName: exchange.name,
-    cripto: cripto,
-    price: Number.parseFloat(price, 10),
-  }))
-}
-
-const createConvertCriptoPricesToBrl = (usd) => (exchangePrice) => ({
-  ...exchangePrice,
-  price: exchangePrice.price * usd,
-})
-
-const createGetProfit = (chosenExchangePrices) => (criptoPrice) => {
-  const chosenExchangePrice = chosenExchangePrices
-    .find((chosenExchangePrice) => chosenExchangePrice.cripto === criptoPrice.cripto)
-
-  return {
-    ...criptoPrice,
-    percent: chosenExchangePrice.price / criptoPrice.price,
-    price: undefined,
-  }
-}
-
-const getDashboardEntry = (profit) => ({
+const toDashboardEntry = (profit) => ({
   exchangeId: profit.exchangeId,
-  exchange: profit.exchangeName,
-  coin: profit.cripto,
+  exchange: profit.exchange,
+  coin: profit.coin,
   profitPercent: profit.percent,
 })
+
+const buildDashboard = (profits) => (
+  flow([
+    (_) => _.map(toDashboardEntry),
+    (_) => sortBy(_, (el) => el.profitPercent),
+    reverse,
+  ])(profits)
+)

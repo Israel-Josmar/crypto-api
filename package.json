@@ -12,6 +12,7 @@
     "express": "^4.16.2",
     "fetch-this": "^0.4.0",
     "lodash.flow": "^3.5.0",
+    "lodash.keyby": "^4.6.0",
     "lodash.reverse": "^4.0.1",
     "lodash.sortby": "^4.7.0",
     "node-fetch": "^2.0.0"
