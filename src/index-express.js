@@ -1,17 +1,16 @@
 import express from 'express'
 import { getDashboard } from './app/dashboard'
-import { getPrice } from './exchange-sdk/sdk'
+import { getAll } from './prices-cache/cache'
 
 const server = express()
 const port = 3001
 
-const data = require('../data.json')
-
 server.get('/dashboard', async (req, res) => {
-  const sdk = { getPrice }
+  const pricesCache = { getAll }
 
   try {
-    const dashboard = await getDashboard(sdk, data)
+    // FIXME: missing chosenExchangeId
+    const dashboard = await getDashboard(pricesCache/* , chosenExchangeId*/)
     return res.send(dashboard)
   } finally {
     res.status(500).end()

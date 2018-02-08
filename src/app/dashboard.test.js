@@ -1,58 +1,59 @@
 import { getDashboard } from './dashboard'
+
 import {
-  getPrice,
-  loadFakeReturns,
-  resetFakeReturns,
-} from '../exchange-sdk/fake-sdk'
+  getAll,
+  loadAll,
+} from '../prices-cache/cache'
 
 describe('#getDashboard', () => {
-  const sdk = { getPrice }
-
-  const data = {
-    chosenExchangeId: 'fake',
-    currencies: {
-      usd: {
-        id: 'usd',
-      },
-    },
-    exchanges: [
-      {
-        id: 'fake',
-        criptos: ['btc', 'eth'],
-      },
-      {
-        id: 'otherFake',
-        name: 'OtherFakeExchange',
-        criptos: ['btc', 'eth'],
-      },
-    ],
-  }
-
-  afterAll(() => {
-    resetFakeReturns()
+  beforeAll(() => {
+    loadAll([])
   })
 
   test('should return a dashboard, sorted by max profit', async () => {
-    loadFakeReturns({
-      usd: 3.18,
-      fake: { btc: 32136, eth: 3550 },
-      otherFake: { btc: 10056.11, eth: 1097.3 },
-    })
+    loadAll([
+      {
+        exchangeId: 'fake',
+        exchange: 'FakeExchange',
+        coin: 'btc',
+        value: 10105.66,
+      },
+      {
+        exchangeId: 'fake',
+        exchange: 'FakeExchange',
+        coin: 'eth',
+        value: 1116.35,
+      },
+      {
+        exchangeId: 'otherFake',
+        exchange: 'OtherFakeExchange',
+        coin: 'btc',
+        value: 10056.11,
+      },
+      {
+        exchangeId: 'otherFake',
+        exchange: 'OtherFakeExchange',
+        coin: 'eth',
+        value: 1097.3,
+      },
+    ])
 
-    const dashboard = await getDashboard(sdk, data)
+    const pricesCache = { getAll }
+
+    const dashboard = await getDashboard(pricesCache, 'fake')
 
     const expected = [
       {
         exchangeId: 'otherFake',
         exchange: 'OtherFakeExchange',
         coin: 'eth',
-        profitPercent: 1.01736280074534,
+        profitPercent: 1.0173607946778456,
       },
       {
         exchangeId: 'otherFake',
         exchange: 'OtherFakeExchange',
         coin: 'btc',
-        profitPercent: 1.0049273901497189,
+        profitPercent: 1.0049273526244242,
       },
     ]
 
