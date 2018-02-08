@@ -1,16 +1,26 @@
 import express from 'express'
 import { getDashboard } from './app/dashboard'
-import { getAll } from './prices-cache/cache'
+import { getAll, loadAll } from './prices-cache/cache'
+import { populateCache } from './prices-cache/service'
+import { getAllExchanges, getAllCurrencies, getChosenExchangeId } from './database/exchange-dao'
+import { getPrice } from './exchange-sdk/sdk'
 
 const server = express()
 const port = 3001
 
 server.get('/dashboard', async (req, res) => {
-  const pricesCache = { getAll }
-
   try {
-    // FIXME: missing chosenExchangeId
-    const dashboard = await getDashboard(pricesCache/* , chosenExchangeId*/)
+    {
+      // move this service call to a background job
+      const pricesCache = { loadAll }
+      const exchangeDAO = { getAllExchanges, getAllCurrencies }
+      const exchangeSDK = { getPrice }
+      await populateCache({ pricesCache, exchangeDAO, exchangeSDK })
+    }
+
+    const pricesCache = { getAll }
+    const chosenExchangeId = await getChosenExchangeId()
+    const dashboard = await getDashboard(pricesCache, chosenExchangeId)
     return res.send(dashboard)
   } finally {
     res.status(500).end()
