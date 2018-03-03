@@ -1,4 +1,4 @@
-import { getPrice } from './sdk'
+import { getPrice } from './exchanges-sdk'
 import nock from 'nock'
 
 describe('get price from exchange', () => {
