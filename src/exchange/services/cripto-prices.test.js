@@ -1,19 +1,19 @@
-import { getAll, loadAll } from './cache'
+import { getAll, loadAll } from '../data-access/prices-dao'
 
 import {
   getAllExchanges,
   getAllCurrencies,
   loadFake as exchangeDAOLoadFake,
-} from '../database/exchange-dao-fake'
+} from '../data-access/exchange-dao-fake'
 
 import {
   getPrice,
   loadFake as exchangeSDKLoadFake,
-} from '../exchange-sdk/sdk-fake'
+} from '../vendor-api/exchanges-sdk-fake'
 
 import {
   populateCache,
-} from './service'
+} from './cripto-prices'
 
 describe('#populateCache', () => {
   beforeAll(() => {

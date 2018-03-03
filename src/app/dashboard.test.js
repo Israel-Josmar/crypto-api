@@ -3,7 +3,7 @@ import { getDashboard } from './dashboard'
 import {
   getAll,
   loadAll,
-} from '../prices-cache/cache'
+} from '../exchange/data-access/prices-dao'
 
 describe('#getDashboard', () => {
   beforeAll(() => {

@@ -1,9 +1,9 @@
 import express from 'express'
 import { getDashboard } from './app/dashboard'
-import { getAll, loadAll } from './prices-cache/cache'
-import { populateCache } from './prices-cache/service'
-import { getAllExchanges, getAllCurrencies, getChosenExchangeId } from './database/exchange-dao'
-import { getPrice } from './exchange-sdk/sdk'
+import { getAll, loadAll } from './exchange/data-access/prices-dao'
+import { populateCache } from './exchange/services/cripto-prices'
+import { getAllExchanges, getAllCurrencies, getChosenExchangeId } from './exchange/data-access/exchange-dao'
+import { getPrice } from './exchange/vendor-api/exchanges-sdk'
 
 const server = express()
 const port = 3001

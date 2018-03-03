@@ -1,7 +1,7 @@
 import {
   loadAll,
   getAll,
-} from './cache'
+} from './prices-dao'
 
 test('should return populated data', async () => {
   loadAll([1, 2, 3])
