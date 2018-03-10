@@ -1,11 +1,9 @@
-import { fetchThis, getResult } from 'fetch-this'
+import { fetchByConfig } from './fetch-util'
 import { expandJson } from 'expand-json'
 
 export const getPrice = async (exchange, payload) => {
-  const data = expandJson(exchange.api, payload)
+  const config = expandJson(exchange.api, payload)
+  const result = await fetchByConfig(config)
 
-  const response = await fetchThis(data.fetch)
-  const value = await getResult(response, data.result)
-
-  return value
+  return result
 }
