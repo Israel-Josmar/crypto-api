@@ -11,6 +11,7 @@
     "expand-json": "^0.3.0",
     "express": "^4.16.2",
     "fetch-this": "^0.4.0",
+    "generatorics": "^1.1.0",
     "lodash.flow": "^3.5.0",
     "lodash.keyby": "^4.6.0",
     "lodash.reverse": "^4.0.1",
