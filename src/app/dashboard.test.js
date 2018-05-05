@@ -1,17 +1,14 @@
 import { getDashboard } from './dashboard'
 
-import {
-  getAll,
-  loadAll,
-} from '../exchange/data-access/prices-dao'
+import * as pricesCache from '../exchange/data-access/prices-dao'
 
 describe('#getDashboard', () => {
   beforeAll(() => {
-    loadAll([])
+    pricesCache.loadAll([])
   })
 
   test('should return a dashboard, sorted by max profit', async () => {
-    loadAll([
+    pricesCache.loadAll([
       {
         exchangeId: 'fake',
         exchange: 'FakeExchange',
@@ -38,9 +35,7 @@ describe('#getDashboard', () => {
       },
     ])
 
-    const pricesCache = { getAll }
-
-    const dashboard = await getDashboard(pricesCache, 'fake')
+    const dashboard = await getDashboard('fake')
 
     const expected = [
       {

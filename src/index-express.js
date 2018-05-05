@@ -14,7 +14,7 @@ server.get('/dashboard', async (req, res) => {
 
   try {
     const chosenExchangeId = await exchangeDAO.getChosenExchangeId()
-    const dashboard = await getDashboard(pricesCache, chosenExchangeId)
+    const dashboard = await getDashboard(chosenExchangeId)
     return res.send(dashboard)
   } finally {
     res.status(500).end()
