@@ -3,7 +3,9 @@ import reverse from 'lodash.reverse'
 import sortBy from 'lodash.sortby'
 import keyBy from 'lodash.keyby'
 
-export const getDashboard = async (pricesCache, chosenExchangeId) => {
+import * as pricesCache from '../exchange/data-access/prices-dao'
+
+export const getDashboard = async (chosenExchangeId) => {
   // get targeted cripto prices from cache
   const prices = await pricesCache.getAll()
 

@@ -1,61 +1,52 @@
-import { getAll, loadAll } from '../data-access/prices-dao'
-
-import {
-  getAllExchanges,
-  getAllCurrencies,
-  loadFake as exchangeDAOLoadFake,
-} from '../data-access/exchange-dao-fake'
-
-import {
-  getPrice,
-  loadFake as exchangeSDKLoadFake,
-} from '../vendor-api/exchanges-sdk-fake'
-
-import {
-  populateCache,
-} from './cripto-prices'
+import * as pricesCache from '../data-access/prices-dao'
 
 describe('#populateCache', () => {
+  let populateCache, exchangeDao, exchangeSDK
+
   beforeAll(() => {
-    exchangeDAOLoadFake({})
-    exchangeSDKLoadFake({})
+    jest.mock('../data-access/exchange-dao')
+    jest.mock('../vendor-api/exchanges-sdk')
+
+    exchangeDao = require('../data-access/exchange-dao')
+    exchangeSDK = require('../vendor-api/exchanges-sdk')
+
+    populateCache = require('./cripto-prices').populateCache
+  })
+
+  afterAll(() => {
+    jest.resetModules()
   })
 
   test('should populate cache with fetched data from sdk', async () => {
-    exchangeDAOLoadFake({
-      currencies: [
-        {
-          id: 'brl',
-        },
-      ],
-      exchanges: [
-        {
-          id: 'fake',
-          name: 'FakeExchange',
-          coins: ['btc', 'eth'],
-          currency: 'brl',
-        },
-        {
-          id: 'otherFake',
-          name: 'OtherFakeExchange',
-          coins: ['btc', 'eth'],
-        },
-      ],
-    })
+    exchangeDao.getAllExchanges.mockResolvedValueOnce([
+      {
+        id: 'fake',
+        name: 'FakeExchange',
+        coins: ['btc', 'eth'],
+        currency: 'brl',
+      },
+      {
+        id: 'otherFake',
+        name: 'OtherFakeExchange',
+        coins: ['btc', 'eth'],
+      },
+    ])
 
-    exchangeSDKLoadFake({
-      brl: 0.31,
+    exchangeDao.getAllCurrencies.mockResolvedValueOnce([{ id: 'brl' }])
+
+    // currency
+    exchangeSDK.getPrice.mockResolvedValueOnce(0.31)
+
+    // criptos
+    const tickles = {
       fake: { btc: 32337.95, eth: 3572.32 },
       otherFake: { btc: 10056.11, eth: 1097.3 },
-    })
+    }
+    exchangeSDK.getPrice.mockImplementation(async (exchange, { coin }) => tickles[exchange.id][coin])
 
-    const pricesCache = { loadAll }
-    const exchangeDAO = { getAllExchanges, getAllCurrencies }
-    const exchangeSDK = { getPrice }
+    await populateCache()
 
-    await populateCache({ pricesCache, exchangeDAO, exchangeSDK })
-
-    const cache = await getAll()
+    const cache = await pricesCache.getAll()
 
     expect(cache).toEqual([
       {

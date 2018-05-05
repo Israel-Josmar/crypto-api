@@ -1,6 +1,10 @@
 import keyBy from 'lodash.keyby'
 
-export const populateCache = async ({ pricesCache, exchangeDAO, exchangeSDK }) => {
+import * as pricesCache from '../data-access/prices-dao'
+import * as exchangeDAO from '../data-access/exchange-dao'
+import * as exchangeSDK from '../vendor-api/exchanges-sdk'
+
+export const populateCache = async () => {
   const [
     exchanges,
     currencies,
