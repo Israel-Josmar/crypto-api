@@ -1,9 +1,7 @@
 import express from 'express'
 import { getDashboard } from './app/dashboard'
-import * as pricesCache from './exchange/data-access/prices-dao'
 import * as pricesService from './exchange/services/cripto-prices'
 import * as exchangeDAO from './exchange/data-access/exchange-dao'
-import * as exchangeSDK from './exchange/vendor-api/exchanges-sdk'
 
 const server = express()
 const port = 3001
@@ -23,7 +21,7 @@ server.get('/dashboard', async (req, res) => {
 
 const simulateBackgroundJobAlreadyRunned = async () => {
   // prepopulate cache
-  await pricesService.populateCache({ pricesCache, exchangeDAO, exchangeSDK })
+  await pricesService.populateCache()
 
   // TODO: on a real background job
   //  prepopulate profit cache with some predefined amounts
