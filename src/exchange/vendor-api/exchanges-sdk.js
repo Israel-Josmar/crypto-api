@@ -35,6 +35,3 @@ export const getBook = async (exchange, payload) => {
 
   return book
 }
-
-// FIXME: remove as soon as finish chaning ticker to booking
-export const getPrice = getBook
