@@ -1,7 +1,8 @@
 import express from 'express'
 import { getDashboard } from './app/dashboard'
-import * as pricesService from './exchange/services/cripto-prices'
-import * as exchangeDAO from './exchange/data-access/exchange-dao'
+import * as bookCache from './exchange/data-access/book-dao'
+import * as profitCache from './exchange/data-access/profit-dao'
+import * as bookService from './exchange/services/populate-book-cache'
 
 const server = express()
 const port = 3001
@@ -11,8 +12,11 @@ server.get('/dashboard', async (req, res) => {
   await simulateBackgroundJobAlreadyRunned()
 
   try {
-    const chosenExchangeId = await exchangeDAO.getChosenExchangeId()
-    const dashboard = await getDashboard(chosenExchangeId)
+    // TODO: get amount from incoming request
+    const amount = 317.460317
+
+    const dashboard = await getDashboard({ amount })
+
     return res.send(dashboard)
   } finally {
     res.status(500).end()
@@ -20,8 +24,16 @@ server.get('/dashboard', async (req, res) => {
 })
 
 const simulateBackgroundJobAlreadyRunned = async () => {
-  // prepopulate cache
-  await pricesService.populateCache()
+  // invalidate caches, populate book cache, prepopulate profit cache
+
+  // invalidate caches
+  await Promise.all([
+    bookCache.invalidate(),
+    profitCache.invalidate(),
+  ])
+
+  // prepopulate book cache
+  await bookService.populateCache()
 
   // TODO: on a real background job
   //  prepopulate profit cache with some predefined amounts

@@ -1,57 +1,84 @@
-import { getDashboard } from './dashboard'
-
-import * as pricesCache from '../exchange/data-access/prices-dao'
+// import { getDashboard } from './dashboard'
 
 describe('#getDashboard', () => {
-  beforeAll(() => {
-    pricesCache.loadAll([])
+  let getDashboard
+
+  const bestProfits = [
+    {
+      source: 'otherFake',
+      dest: 'fake',
+      coin: 'btc',
+      profitPercent: 1.0049273526244242,
+    },
+    {
+      source: 'otherFake',
+      dest: 'fake',
+      coin: 'eth',
+      profitPercent: 1.0173607946778456,
+    },
+  ]
+
+  describe('when there is profit loaded for giving amount', () => {
+    beforeAll(() => {
+      jest.doMock('../exchange/data-access/profit-dao', () => {
+        return {
+          getBest: jest.fn().mockResolvedValue(bestProfits),
+        }
+      })
+
+      getDashboard = require('./dashboard').getDashboard
+    })
+
+    afterAll(() => {
+      jest.resetModules()
+    })
+
+    test('should return a dashboard for giving amount, sorted by max profit', async () => {
+      const dashboard = await getDashboard({ amount: 375 })
+
+      const expected = [
+        {
+          source: 'otherFake',
+          dest: 'fake',
+          coin: 'eth',
+          profitPercent: 1.0173607946778456,
+        },
+        {
+          source: 'otherFake',
+          dest: 'fake',
+          coin: 'btc',
+          profitPercent: 1.0049273526244242,
+        },
+      ]
+
+      expect(dashboard).toEqual(expected)
+    })
   })
 
-  test('should return a dashboard, sorted by max profit', async () => {
-    pricesCache.loadAll([
-      {
-        exchangeId: 'fake',
-        exchange: 'FakeExchange',
-        coin: 'btc',
-        value: 10105.66,
-      },
-      {
-        exchangeId: 'fake',
-        exchange: 'FakeExchange',
-        coin: 'eth',
-        value: 1116.35,
-      },
-      {
-        exchangeId: 'otherFake',
-        exchange: 'OtherFakeExchange',
-        coin: 'btc',
-        value: 10056.11,
-      },
-      {
-        exchangeId: 'otherFake',
-        exchange: 'OtherFakeExchange',
-        coin: 'eth',
-        value: 1097.3,
-      },
-    ])
+  describe('when there is no profit loaded but there is book loaded', () => {
+    let profitDaoMock = {
+      getBest: jest.fn()
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce(bestProfits),
+    }
 
-    const dashboard = await getDashboard('fake')
+    beforeAll(() => {
+      jest.doMock('../exchange/data-access/profit-dao', () => profitDaoMock)
+      jest.doMock('../exchange/services/populate-profit-cache', () => ({
+        populateCache: jest.fn().mockResolvedValue(),
+      }))
 
-    const expected = [
-      {
-        exchangeId: 'otherFake',
-        exchange: 'OtherFakeExchange',
-        coin: 'eth',
-        profitPercent: 1.0173607946778456,
-      },
-      {
-        exchangeId: 'otherFake',
-        exchange: 'OtherFakeExchange',
-        coin: 'btc',
-        profitPercent: 1.0049273526244242,
-      },
-    ]
+      getDashboard = require('./dashboard').getDashboard
+    })
 
-    expect(dashboard).toEqual(expected)
+    afterAll(() => {
+      jest.resetModules()
+    })
+
+    test('should call profitDao.getBest', async () => {
+      await getDashboard({ amount: 375 })
+
+      expect(profitDaoMock.getBest.mock.calls.length).toEqual(2)
+    })
   })
 })

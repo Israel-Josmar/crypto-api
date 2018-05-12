@@ -1,16 +1,18 @@
 import flow from 'lodash.flow'
 import reverse from 'lodash.reverse'
 import sortBy from 'lodash.sortby'
-import keyBy from 'lodash.keyby'
+import * as profitService from '../exchange/services/populate-profit-cache'
+import * as bookCache from '../exchange/data-access/book-dao'
+import * as profitCache from '../exchange/data-access/profit-dao'
 
-import * as pricesCache from '../exchange/data-access/prices-dao'
+export const getDashboard = async ({ amount }) => {
+  // get profits from cache or generate on cache miss
+  let profits = await profitCache.getBest(amount)
 
-export const getDashboard = async (chosenExchangeId) => {
-  // get targeted cripto prices from cache
-  const prices = await pricesCache.getAll()
-
-  // discover profits from given prices
-  const profits = getProfits(prices, chosenExchangeId)
+  if (!profits || !profits.length) {
+    await profitService.populateCache({ bookCache, profitCache, amount  })
+    profits = await profitCache.getBest(amount)
+  }
 
   // build the final dashboard
   const dashboard = buildDashboard(profits)
@@ -18,37 +20,13 @@ export const getDashboard = async (chosenExchangeId) => {
   return dashboard
 }
 
-const getProfits = (prices, chosenExchangeId) => {
-  const isChosenExchange = (price) => price.exchangeId === chosenExchangeId
-  const isOtherExchange = (price) => !isChosenExchange(price)
-
-  // hashmap of prices by coin id
-  const targetPricesMap = flow([
-    _ => _.filter(isChosenExchange),
-    _ => keyBy(_, (price) => price.coin),
-  ])(prices)
-
-  // list of prices for other criptos that has a target price
-  const otherPrices = prices
-    .filter(isOtherExchange)
-    .filter((price) => targetPricesMap[price.coin])
-
-  const profits = otherPrices.map((price) => {
-    const targetPrice = targetPricesMap[price.coin]
-    return ({
-      ...price,
-      percent: Number.parseFloat(targetPrice.value, 10) / Number.parseFloat(price.value, 10),
-    })
-  })
-
-  return profits
-}
-
 const toDashboardEntry = (profit) => ({
-  exchangeId: profit.exchangeId,
-  exchange: profit.exchange,
+  source: profit.source,
+  sourceName: profit.sourceName,
+  dest: profit.dest,
+  destName: profit.destName,
   coin: profit.coin,
-  profitPercent: profit.percent,
+  profitPercent: profit.profitPercent,
 })
 
 const buildDashboard = (profits) => (
