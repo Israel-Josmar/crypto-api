@@ -12,10 +12,10 @@ server.get('/dashboard', async (req, res) => {
   await simulateBackgroundJobAlreadyRunned()
 
   try {
-    // TODO: get amount from incoming request
-    const amount = 317.460317
+    const userAmount = req.query.amount
+    const currency = req.query.currency
 
-    const dashboard = await getDashboard({ amount })
+    const dashboard = await getDashboard({ userAmount, currency })
 
     return res.send(dashboard)
   } finally {

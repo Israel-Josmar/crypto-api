@@ -5,7 +5,10 @@ import * as profitService from '../exchange/services/populate-profit-cache'
 import * as bookCache from '../exchange/data-access/book-dao'
 import * as profitCache from '../exchange/data-access/profit-dao'
 
-export const getDashboard = async ({ amount }) => {
+export const getDashboard = async ({ userAmount, currency }) => {
+  // TODO: create a currency cache
+  const amount = (await simulateGetCurrencyFromCache(currency)) * userAmount
+
   // get profits from cache or generate on cache miss
   let profits = await profitCache.getBest(amount)
 
@@ -36,3 +39,8 @@ const buildDashboard = (profits) => (
     reverse,
   ])(profits)
 )
+
+const simulateGetCurrencyFromCache = async (currency) => {
+  const response = await fetch('http://free.currencyconverterapi.com/api/v3/convert?q=BRL_USD&compact=y')
+  return (await response.json()).BRL_USD.val
+}
