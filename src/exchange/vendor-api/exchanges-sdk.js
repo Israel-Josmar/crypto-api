@@ -11,6 +11,11 @@ const transformList = {
    * [{ price: $price, amount: $amount }], ...]
   */
   fromArrayOfObject: (arr) => arr,
+  /*
+   * [{ unit_price: $price, amount: $amount }], ...]
+  */
+  fromArrayOfObjectUnitPrice: (arr) => arr.map(({ unit_price, amount }) => ({ price: unit_price, amount: amount })),
+
 }
 
 export const getBook = async (exchange, payload) => {
