@@ -1,0 +1,15 @@
+method: bundle
+
+babel: true
+sourceMaps: false
+
+functions:
+  dashboard:
+    include:
+      - "src/**"
+      - "data.json" # database simulation
+    exclude:
+      - src/index-development.js
+      - src/index-express.js
+      - "**/*.test.js"
+      - "**/__mocks__/**"

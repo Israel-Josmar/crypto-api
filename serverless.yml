@@ -6,3 +6,6 @@ provider:
   stage: dev
   region: sa-east-1
   memorySize: 128
+
+plugins:
+  - serverless-build-plugin
