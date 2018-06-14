@@ -1,0 +1,17 @@
+service: crypto-api
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: sa-east-1
+  memorySize: 128
+
+plugins:
+  - serverless-build-plugin
+
+functions:
+  dashboard:
+    handler: src/index-lambda.dashboard
+    memorySize: 128
+    timeout: 5
