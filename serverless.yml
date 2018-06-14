@@ -23,3 +23,7 @@ functions:
     handler: src/index-lambda.dashboard
     memorySize: 128
     timeout: 5
+    events:
+      - http:
+          path: dashboard
+          method: get
