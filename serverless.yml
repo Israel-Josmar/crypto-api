@@ -16,6 +16,7 @@ provider:
   runtime: nodejs8.10
   stage: dev
   region: sa-east-1
+  profile: CryptoArb
   memorySize: 128
 
 functions:
