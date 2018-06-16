@@ -18,10 +18,7 @@ export const dashboard = async (event, context, callback) => {
 
   const response = {
     statusCode: 200,
-    body: JSON.stringify({
-      message: dashboard,
-      input: event,
-    }),
+    body: JSON.stringify(dashboard),
   }
 
   callback(null, response)
