@@ -4,6 +4,8 @@ plugins:
   - serverless-webpack
 
 custom:
+  # Use stage option from cli, fallbacks to provider section
+  stage: ${opt:stage, self:provider.stage}
   # serverless-webpack configuration
   webpack:
     webpackConfig: ./config/webpack/webpack.config.js
@@ -28,3 +30,7 @@ functions:
       - http:
           path: dashboard
           method: get
+
+resources:
+  # Cognito
+  - ${file(config/serverless/cognito-user-pool.yml)}
