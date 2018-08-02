@@ -30,6 +30,7 @@ functions:
       - http:
           path: dashboard
           method: get
+          authorizer: aws_iam
 
 resources:
   # Cognito
