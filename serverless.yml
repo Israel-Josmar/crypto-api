@@ -11,6 +11,8 @@ custom:
 
 provider:
   name: aws
+  stackTags:
+    project: CryptoArb
   runtime: nodejs8.10
   stage: dev
   region: sa-east-1
