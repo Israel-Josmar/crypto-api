@@ -34,3 +34,4 @@ functions:
 resources:
   # Cognito
   - ${file(config/serverless/cognito-user-pool.yml)}
+  - ${file(config/serverless/cognito-identity-pool.yml)}
