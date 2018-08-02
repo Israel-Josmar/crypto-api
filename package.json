@@ -5,7 +5,7 @@
   "scripts": {
     "fix": "fixpack && eslint . --fix --max-warnings 0 --ignore-pattern !/.*rc.js",
     "start": "nodemon ./src/index-development",
-    "test": "jest --watch"
+    "test": "jest --watch --env=node"
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
