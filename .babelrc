@@ -1,13 +1,10 @@
 {
-  "env": {
-    "development": {
-      "presets": [["env", { "targets": { "node": "current" } }]]
-    },
-    "test": {
-      "presets": [["env", { "targets": { "node": "current" } }]]
-    }
-  },
+  "presets": [
+    ["env", { "node": "current" }]
+  ],
   "plugins": [
-    "transform-object-rest-spread"
+    "transform-object-rest-spread",
+    "transform-runtime",
+    "source-map-support"
   ]
 }
