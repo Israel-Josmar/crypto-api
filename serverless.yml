@@ -1,5 +1,14 @@
 service: crypto-api
 
+plugins:
+  - serverless-webpack
+
+custom:
+  # serverless-webpack configuration
+  webpack:
+    webpackConfig: ./config/webpack/webpack.config.js
+    includeModules: true
+
 provider:
   name: aws
   runtime: nodejs8.10
