@@ -1,14 +1,22 @@
 service: crypto-api
 
+plugins:
+  - serverless-webpack
+
+custom:
+  # serverless-webpack configuration
+  webpack:
+    webpackConfig: ./config/webpack/webpack.config.js
+    includeModules: true
+
 provider:
   name: aws
+  stackTags:
+    project: CryptoArb
   runtime: nodejs8.10
   stage: dev
   region: sa-east-1
   memorySize: 128
-
-plugins:
-  - serverless-build-plugin
 
 functions:
   dashboard:
