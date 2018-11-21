@@ -32,6 +32,8 @@ functions:
           path: dashboard
           method: get
           authorizer: aws_iam
+          cors:
+            origin: 'http://localhost:3000'
           request:
             parameters:
               querystrings:

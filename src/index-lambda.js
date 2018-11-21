@@ -2,9 +2,11 @@
 import 'regenerator-runtime/runtime'
 global.fetch = require('node-fetch')
 
+import middy from 'middy'
+import { cors } from 'middy/middlewares'
 import { getDashboard } from './app/dashboard'
 
-export const dashboard = async (event, context, callback) => {
+const dashboardHandler = async (event, context, callback) => {
   const userAmount = event.queryStringParameters.amount
   const currency = event.queryStringParameters.currency
 
@@ -17,3 +19,6 @@ export const dashboard = async (event, context, callback) => {
 
   callback(null, response)
 }
+
+export const dashboard = middy(dashboardHandler)
+  .use(cors())
