@@ -24,7 +24,7 @@ provider:
 
 functions:
   dashboard:
-    handler: src/index-lambda.dashboard
+    handler: src/lambda/dashboard.default
     memorySize: 128
     timeout: 5
     events:
