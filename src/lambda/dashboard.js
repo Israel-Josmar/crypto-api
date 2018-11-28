@@ -2,15 +2,11 @@
 import 'regenerator-runtime/runtime'
 global.fetch = require('node-fetch')
 
-import { getDashboard } from './app/dashboard'
+import middy from 'middy'
+import { cors } from 'middy/middlewares'
+import { getDashboard } from '../app/dashboard'
 
-/*
- * npx sls invoke local \
- *  -f dashboard \
- *  -d '{"queryStringParameters": {"amount":"1000", "currency": "brl"}}'
- */
-
-export const dashboard = async (event, context, callback) => {
+const dashboard = async (event, context, callback) => {
   const userAmount = event.queryStringParameters.amount
   const currency = event.queryStringParameters.currency
 
@@ -18,11 +14,11 @@ export const dashboard = async (event, context, callback) => {
 
   const response = {
     statusCode: 200,
-    body: JSON.stringify({
-      message: dashboard,
-      input: event,
-    }),
+    body: JSON.stringify(dashboard),
   }
 
   callback(null, response)
 }
+
+export default middy(dashboard)
+  .use(cors())

@@ -4,6 +4,8 @@ plugins:
   - serverless-webpack
 
 custom:
+  # Use stage option from cli, fallbacks to provider section
+  stage: ${opt:stage, self:provider.stage}
   # serverless-webpack configuration
   webpack:
     webpackConfig: ./config/webpack/webpack.config.js
@@ -15,11 +17,30 @@ provider:
     project: CryptoArb
   runtime: nodejs8.10
   stage: dev
-  region: sa-east-1
+  region: us-east-2
+  endpointType: regional
+  profile: CryptoArb
   memorySize: 128
 
 functions:
   dashboard:
-    handler: src/index-lambda.dashboard
+    handler: src/lambda/dashboard.default
     memorySize: 128
     timeout: 5
+    events:
+      - http:
+          path: dashboard
+          method: get
+          authorizer: aws_iam
+          cors:
+            origin: 'http://localhost:3000'
+          request:
+            parameters:
+              querystrings:
+                amount: true
+                currency: false
+
+resources:
+  # Cognito
+  - ${file(config/serverless/cognito-user-pool.yml)}
+  - ${file(config/serverless/cognito-identity-pool.yml)}
